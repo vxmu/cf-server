@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  runtime  = "cloudflare"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 enum UserRole {
@@ -25,19 +26,20 @@ enum UserStatus {
 
 model User {
   id          Int        @id @default(autoincrement())
-  avatar      String?    @db.VarChar(255)
-  username    String     @unique @db.VarChar(30)
-  nickname    String?    @db.VarChar(30)
-  password    String     @db.VarChar(255)
-  email       String?    @unique @db.VarChar(255)
-  phone       String?    @unique @db.VarChar(15)
+  avatar      String?
+  username    String     @unique
+  nickname    String?
+  password    String
+  email       String?    @unique
+  phone       String?    @unique
   status      UserStatus @default(NORMAL)
   plan        UserPlan   @default(FREE)
-  balance     Decimal?   @default(0) @db.Decimal(12, 2)
-  planEndTime DateTime?  @map("plan_end_time") @db.Timestamp(6)
+  // D1/SQLite 不支持 Prisma Decimal，这里使用 REAL 存储余额。
+  balance     Float?     @default(0)
+  planEndTime DateTime?  @map("plan_end_time")
   role        UserRole   @default(USER)
-  createdAt   DateTime?  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt   DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  createdAt   DateTime?  @default(now()) @map("created_at")
+  updatedAt   DateTime?  @default(now()) @updatedAt @map("updated_at")
   profile     Json?
 
   @@index([status], map: "user_status_idx")

@@ -3,27 +3,24 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "dev:cf": "wrangler dev",
-    "build:serverless": "bun build ./src/index.ts --target=node --outfile=dist/index.js",
-    "build:fc": "bun build ./src/index.ts --target=bun --outfile=dist/index.js",
-    "deploy:cf": "wrangler deploy",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "db:generate": "bunx --bun prisma generate",
-    "db:push": "bunx --bun prisma db push",
-    "db:migrate:dev": "bunx --bun prisma migrate dev",
-    "db:migrate:deploy": "bunx --bun prisma migrate deploy"
+    "db:migration:generate": "bunx --bun prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script --output migrations/0001_init.sql",
+    "d1:migrate:local": "wrangler d1 migrations apply hono-agent-db --local",
+    "d1:migrate:remote": "wrangler d1 migrations apply hono-agent-db --remote"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "^7.0.0",
     "@hono/zod-validator": "^0.7.6",
+    "@prisma/adapter-d1": "7.6.0",
+    "@prisma/client": "7.6.0",
     "hono": "^4.12.8",
-    "pg": "^8.16.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "prisma": "^7.0.0",
+    "@cloudflare/workers-types": "^4.20260603.1",
+    "@types/bun": "^1.4.2",
+    "prisma": "7.6.0",
     "wrangler": "^4.0.0"
   }
 }

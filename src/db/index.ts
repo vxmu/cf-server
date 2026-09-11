@@ -1,29 +1,20 @@
-import { PrismaPg } from '@prisma/adapter-pg'
+/// <reference types="@cloudflare/workers-types" />
+import { PrismaD1 } from '@prisma/adapter-d1'
 import { PrismaClient } from '@prisma/client'
+// Prisma Client 按 D1 binding 复用，避免每次请求重复初始化。
+const clients = new WeakMap<object, PrismaClient>()
 
-const globalForPrisma = globalThis as typeof globalThis & {
-  prisma?: PrismaClient
-}
-
-const createPrismaClient = () => {
-  const connectionString = process.env.DATABASE_URL
-
-  if (!connectionString) {
-    throw new Error('致命错误：环境变量 DATABASE_URL 未设置！请检查 .env 或云端配置。')
+export const getDb = (database: D1Database): PrismaClient => {
+  const cachedClient = clients.get(database)
+  if (cachedClient) {
+    return cachedClient
   }
 
-  const adapter = new PrismaPg(connectionString)
-
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  const client = new PrismaClient({
+    adapter: new PrismaD1(database),
+    log: ['error'],
   })
-}
 
-export const getDb = () => {
-  if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = createPrismaClient()
-  }
-
-  return globalForPrisma.prisma
+  clients.set(database, client)
+  return client
 }

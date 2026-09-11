@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "strict": true,
+    "skipLibCheck": true,
+    "types": ["bun-types"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "esModuleInterop": true, // 让 CommonJS 模块也能用 import xxx from 导入
@@ -9,5 +11,6 @@
     "moduleResolution": "bundler", // 怎么找依赖 模拟：Bun、Vite、Webpack 的解析方式
     // "skipLibCheck": true, // 跳过 node_modules 的类型检查, 只检查自己写的代码
     // "allowSyntheticDefaultImports": true, // 容忍 default 导入
-  }
+  },
+  "exclude": ["worker-configuration.d.ts"]
 }

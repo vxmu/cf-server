@@ -37,11 +37,10 @@ export class Logger {
 
   // 核心打印逻辑
   private print(level: string, message: string, color: string) {
-    const pid = process.pid;
     const timestamp = this.getTimestamp();
     
-    // 完美复刻 NestJS 格式：[前缀] PID - 时间戳   级别 [上下文] 消息
-    const prefix = `${colors.green}[Hono] ${pid}  -${colors.reset}`;
+    // 统一输出：[前缀] - 时间戳   级别 [上下文] 消息
+    const prefix = `${colors.green}[Hono] -${colors.reset}`;
     const timeStr = `${timestamp}`;
     const levelStr = `${color}${level.padEnd(7)}${colors.reset}`;
     const contextStr = `${colors.yellow}[${this.context}]${colors.reset}`;

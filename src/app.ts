@@ -3,9 +3,10 @@ import { Logger } from './utils/logger'
 import { customLogger } from './middleware/httpLogger.middleware'
 import { BusinessException } from './core/exceptions'
 import apiRouter from './routes'
+import type { Env } from './env'
 
 export const createApp = () => {
-  const app = new Hono()
+  const app = new Hono<{ Bindings: Env }>()
   const errorLogger = new Logger('ExceptionFilter')
 
   app.use('*', customLogger())
@@ -29,7 +30,7 @@ export const createApp = () => {
       }, err.statusCode as any)
     }
 
-    if ((err as any).code === '23505') {
+    if ((err as any).code === 'P2002' || (err as any).code === '23505') {
       errorLogger.warn(`[DatabaseConflict] ${err.message}`)
 
       return c.json({

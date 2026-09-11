@@ -5,6 +5,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Logger } from '../utils/logger';
 import { UserService } from '../services/user.service';
 import { ApiResponse } from '../core/response';
+import type { Env } from '../env';
 
 // 定义入参规则（Zod Schema）
 export const registerUserSchema = z.object({
@@ -21,13 +22,13 @@ export const registerUserSchema = z.object({
     nickname: z.string().max(30).optional(),
 });
 
-const userApp = new Hono();
+const userApp = new Hono<{ Bindings: Env }>();
 const logger = new Logger('UserController');
 // 注册
 userApp.post('/register', zValidator('json', registerUserSchema), async (c) => {
     const data = c.req.valid('json');
     logger.log(`收到新用户注册请求： ${data.username}`);
-    const newUser = await UserService.register(data);
+    const newUser = await UserService.register(c.env.DB, c.env.USER_CACHE, data);
 
     return c.json(ApiResponse.success(newUser, '注册成功', 201), 201);
 });
@@ -36,7 +37,11 @@ userApp.post('/register', zValidator('json', registerUserSchema), async (c) => {
 userApp.get('/:username', async (c) => {
     const username = c.req.param('username')
 
-    const user = await UserService.getUserByusername(username)
+    const user = await UserService.getUserByusername(
+        c.env.DB,
+        c.env.USER_CACHE,
+        username,
+    )
     return c.json(ApiResponse.success(user))
 });
 

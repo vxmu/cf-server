@@ -4,3 +4,4 @@ node_modules/
 dist
 bun-layer.zip
 .wrangler/
+worker-configuration.d.ts
