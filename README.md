@@ -86,6 +86,28 @@ curl http://localhost:8787/
 
 本地 D1 和 KV 数据由 Wrangler 管理，状态目录为 `.wrangler/`，不会提交到 Git。
 
+## 依赖安全维护
+
+使用 `bun audit` 检查漏洞，更新依赖后运行：
+
+```bash
+bun install --frozen-lockfile
+bun audit
+bun run db:generate
+bun test
+bunx tsc --noEmit
+bunx wrangler deploy --dry-run
+```
+
+Prisma CLI、Client 和 D1 adapter 保持相同版本。当前 `package.json` 的
+`overrides` 用于修复 Prisma 7.10.0 依赖链中的漏洞：
+
+- `deepmerge-ts@8.0.2`：修复递归对象合并导致的栈耗尽；Prisma 使用的普通 `deepmerge` 调用已通过配置加载和 Client 生成验证。
+- `fast-uri@3.1.7`：修复 URI 解析与规范化漏洞，保持在上游要求的 3.x 范围内。
+- `mysql2@3.24.4`：修复压缩协议 DoS 和认证降级漏洞；本项目使用 D1，不使用 MySQL。
+
+这些覆盖是临时措施，尤其 `deepmerge-ts` 跨越了上游声明的主版本。后续升级 Prisma 时，应检查能否移除覆盖，并重新运行上述验证。
+
 ## 部署
 
 确认 `wrangler.jsonc` 中已填入真实的 D1 database ID 和 KV namespace ID，然后执行：

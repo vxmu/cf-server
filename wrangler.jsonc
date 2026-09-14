@@ -1,22 +1,35 @@
 {
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "hono-agent",
-  "main": "src/worker.ts",
-  "compatibility_date": "2026-06-05",
-  "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": true,
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "hono-agent-db",
-      "database_id": "__REPLACE_WITH_D1_DATABASE_ID__",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "USER_CACHE",
-      "id": "__REPLACE_WITH_KV_NAMESPACE_ID__"
-    }
-  ]
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "hono-agent",
+	"main": "src/worker.ts",
+	"compatibility_date": "2026-06-05",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"workers_dev": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "hono-agent-db",
+			"database_id": "__REPLACE_WITH_D1_DATABASE_ID__",
+			"migrations_dir": "migrations"
+		},
+		{
+			"binding": "xiaohui",
+			"database_name": "xiaohui",
+			"database_id": "57259bb0-a813-4820-bf53-140050cf5090",
+			"remote": true
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "USER_CACHE",
+			"id": "__REPLACE_WITH_KV_NAMESPACE_ID__"
+		},
+		{
+			"binding": "xiaohuikv",
+			"id": "f140464ae1254a08985e26122e37cb15",
+			"remote": true
+		}
+	]
 }
